@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
+import { hasSubscriptionAccess } from "@/lib/billing/access";
 import type { Workspace, WorkspaceRole } from "@/lib/domain/types";
+import { redirect } from "next/navigation";
 
 export type WorkspaceContext =
   | { state: "setup" }
@@ -8,7 +10,7 @@ export type WorkspaceContext =
   | { state: "error" }
   | { state: "ready"; userId: string; role: WorkspaceRole; workspace: Workspace; supabase: Awaited<ReturnType<typeof createClient>> };
 
-export async function getWorkspaceContext(): Promise<WorkspaceContext> {
+export async function getWorkspaceContext(options: { allowBillingWithoutAccess?: boolean } = {}): Promise<WorkspaceContext> {
   let supabase: Awaited<ReturnType<typeof createClient>>;
   try {
     supabase = await createClient();
@@ -33,6 +35,15 @@ export async function getWorkspaceContext(): Promise<WorkspaceContext> {
 
   const workspace = Array.isArray(data.workspaces) ? data.workspaces[0] : data.workspaces;
   if (!workspace) return { state: "error" };
+
+  if (!options.allowBillingWithoutAccess) {
+    const { data: subscription } = await supabase
+      .from("subscriptions")
+      .select("status, trial_ends_at, current_period_ends_at")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!hasSubscriptionAccess(subscription)) redirect("/billing");
+  }
 
   return {
     state: "ready",

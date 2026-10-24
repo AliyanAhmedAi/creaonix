@@ -6,10 +6,10 @@ const groups = [
   { label: "Manage", links: [["Media", "/media"], ["Scripts", "/scripts"], ["Calendar", "/calendar"]] },
   { label: "Publish", links: [["Social accounts", null]] },
   { label: "Insights", links: [["Analytics", null], ["Comments", null]] },
-  { label: "Workspace", links: [["Brand kit", "/brand-kit"], ["Team", null], ["Billing", null]] }
+  { label: "Workspace", links: [["Brand kit", "/brand-kit"], ["Team", null], ["Billing", "/billing"]] }
 ];
 
-export function AppSidebar({ workspaceName, role, active }: { workspaceName: string; role: WorkspaceRole; active: "Dashboard" | "Content" | "Calendar" | "AI Studio" | "Brand kit" | "Media" | "Scripts" }) {
+export function AppSidebar({ workspaceName, role, active, isPlatformAdmin = false }: { workspaceName: string; role: WorkspaceRole; active: "Dashboard" | "Content" | "Calendar" | "AI Studio" | "Brand kit" | "Media" | "Scripts" | "Billing" | "Admin portal"; isPlatformAdmin?: boolean }) {
   return <aside className="sidebar">
     <Link className="brand" href="/"><span className="brand-mark">C</span> Creonix</Link>
     <div className="workspace-switcher"><span>Workspace</span><strong>{workspaceName}</strong></div>
@@ -17,6 +17,7 @@ export function AppSidebar({ workspaceName, role, active }: { workspaceName: str
       <span className="nav-label">{group.label}</span>
       {group.links.map(([label, href]) => href ? <Link key={label} href={href} aria-current={label === active ? "page" : undefined} className={`nav-link ${label === active ? "active" : ""}`}><i className="nav-dot" />{label}</Link> : <span key={label} className="nav-link nav-disabled" aria-disabled="true" title="Coming soon"><i className="nav-dot" />{label}<small>Soon</small></span>)}
     </nav>)}
+    {isPlatformAdmin && <nav className="nav-group" aria-label="Administration"><span className="nav-label">Owner</span><Link href="/admin" aria-current={active === "Admin portal" ? "page" : undefined} className={`nav-link ${active === "Admin portal" ? "active" : ""}`}><i className="nav-dot" />Admin portal</Link></nav>}
     <div className="sidebar-footer"><strong>{role[0].toUpperCase() + role.slice(1)} access</strong><p>{role === "viewer" ? "You can view this workspace." : "Workspace content stays private to your team."}</p></div>
   </aside>;
 }
