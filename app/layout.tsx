@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Creonix | Creator operating system",
+  title: "Creaonix | Creator operating system",
   description: "Create, manage, publish, and improve creator content from one workspace."
 };
 

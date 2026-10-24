@@ -13,7 +13,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main id="main-content" className="auth-page">
       <section className="auth-card" aria-labelledby="login-title">
-        <Link className="brand auth-brand" href="/"><span className="brand-mark" aria-hidden="true">C</span> Creonix</Link>
+        <Link className="brand auth-brand" href="/"><span className="brand-mark" aria-hidden="true">C</span> Creaonix</Link>
         <p className="eyebrow">Welcome back</p>
         <h1 id="login-title">Sign in to your workspace</h1>
         <p className="auth-intro">Continue organizing your creator workflow in one place.</p>
@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <div className="auth-divider" aria-hidden="true"><span>or</span></div>
         <AuthForm action={signIn} submitLabel="Sign in" />
         <p className="auth-forgot"><Link href="/forgot-password">Forgot password?</Link></p>
-        <p className="auth-footer">New to Creonix? <Link href="/signup">Create an account</Link></p>
+        <p className="auth-footer">New to Creaonix? <Link href="/signup">Create an account</Link></p>
       </section>
     </main>
   );

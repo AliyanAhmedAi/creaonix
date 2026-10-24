@@ -17,7 +17,7 @@ export function WorkspaceForm() {
       </div>
       <div className="field-group">
         <label htmlFor="slug">Workspace URL</label>
-        <div className="input-prefix"><span aria-hidden="true">creonix.app/</span><input id="slug" name="slug" autoComplete="off" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxLength={100} required placeholder="northstar-studio" aria-describedby="slug-help" /></div>
+        <div className="input-prefix"><span aria-hidden="true">creaonix.app/</span><input id="slug" name="slug" autoComplete="off" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxLength={100} required placeholder="northstar-studio" aria-describedby="slug-help" /></div>
         <p id="slug-help" className="field-help">Use lowercase letters, numbers, and hyphens only.</p>
       </div>
       {state.error ? <p className="form-message" role="alert">{state.error}</p> : null}

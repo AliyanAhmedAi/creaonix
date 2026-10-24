@@ -1,8 +1,8 @@
-# Creonix MVP Development Plan
+# Creaonix MVP Development Plan
 
 ## Product goal
 
-Creonix is a secure, AI-powered, multi-tenant SaaS operating system for social-media creators. It should let a creator move through one reliable workflow:
+Creaonix is a secure, AI-powered, multi-tenant SaaS operating system for social-media creators. It should let a creator move through one reliable workflow:
 
 `Create → Store → Edit → Repurpose → Schedule → Publish → Manage Comments → Analyze → Improve`
 

@@ -1,4 +1,4 @@
--- Creonix Foundation: identities come from auth.users; all tenant data is workspace-scoped.
+-- Creaonix Foundation: identities come from auth.users; all tenant data is workspace-scoped.
 create extension if not exists pgcrypto;
 
 create type public.workspace_role as enum ('owner', 'admin', 'editor', 'viewer');

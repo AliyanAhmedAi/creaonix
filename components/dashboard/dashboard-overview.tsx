@@ -30,7 +30,7 @@ export function DashboardOverview() {
       </article>
       <aside className="card"><header className="card-header"><h2>AI recommendations</h2><a href="#">AI Studio</a></header>
         <div className="suggestion"><div className="suggestion-title">Start with a content pillar <span className="tag">Strategy</span></div><p>Define 3 recurring topics to make your next month easier to plan and repurpose.</p></div>
-        <div className="suggestion"><div className="suggestion-title">Connect your first channel <span className="tag">Setup</span></div><p>Official provider access lets Creonix prepare publishing and analytics only where supported.</p></div>
+        <div className="suggestion"><div className="suggestion-title">Connect your first channel <span className="tag">Setup</span></div><p>Official provider access lets Creaonix prepare publishing and analytics only where supported.</p></div>
         <div className="suggestion"><div className="suggestion-title">Create a brand kit <span className="tag">AI</span></div><p>Add your voice, CTA, and visual identity before generating scripts or captions.</p></div>
       </aside>
     </section>

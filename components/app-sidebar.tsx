@@ -11,7 +11,7 @@ const groups = [
 
 export function AppSidebar({ workspaceName, role, active, isPlatformAdmin = false }: { workspaceName: string; role: WorkspaceRole; active: "Dashboard" | "Content" | "Calendar" | "AI Studio" | "Brand kit" | "Media" | "Scripts" | "Billing" | "Admin portal"; isPlatformAdmin?: boolean }) {
   return <aside className="sidebar">
-    <Link className="brand" href="/"><span className="brand-mark">C</span> Creonix</Link>
+    <Link className="brand" href="/"><span className="brand-mark">C</span> Creaonix</Link>
     <div className="workspace-switcher"><span>Workspace</span><strong>{workspaceName}</strong></div>
     {groups.map((group) => <nav className="nav-group" key={group.label} aria-label={group.label}>
       <span className="nav-label">{group.label}</span>

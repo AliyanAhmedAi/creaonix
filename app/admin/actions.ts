@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { createAdminSupabaseClient, getPlatformAdmin } from "@/lib/admin/access";
+import { createAdminSupabaseClient, getPlatformAdmin, getPlatformAdminEmails } from "@/lib/admin/access";
 import { createClient } from "@/lib/supabase/server";
 
 const subscriptionForm = z.object({
@@ -60,10 +60,7 @@ export async function softDeleteClientAccount(formData: FormData) {
   const admin = createAdminSupabaseClient();
   if (!admin) redirect("/admin?result=configuration");
   const normalizedEmail = email.data.toLowerCase();
-  const protectedAdmins = (process.env.CREONIX_ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((entry) => entry.trim().toLowerCase())
-    .filter(Boolean);
+  const protectedAdmins = getPlatformAdminEmails();
   if (protectedAdmins.includes(normalizedEmail)) redirect("/admin?result=protected-admin");
 
   const { user, error: lookupError } = await findUserByEmail(admin, normalizedEmail);

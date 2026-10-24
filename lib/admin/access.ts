@@ -1,13 +1,17 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 
-export async function getPlatformAdmin() {
-  const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-  const allowlist = (process.env.CREONIX_ADMIN_EMAILS ?? "")
+export function getPlatformAdminEmails() {
+  return (process.env.CREAONIX_ADMIN_EMAILS ?? process.env.CREONIX_ADMIN_EMAILS ?? "")
     .split(",")
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
+}
+
+export async function getPlatformAdmin() {
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  const allowlist = getPlatformAdminEmails();
 
   return {
     user,

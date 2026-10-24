@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
-import { createAdminSupabaseClient, getPlatformAdmin } from "@/lib/admin/access";
+import { createAdminSupabaseClient, getPlatformAdmin, getPlatformAdminEmails } from "@/lib/admin/access";
 import { sendClientPasswordReset, softDeleteClientAccount, updateSubscription } from "./actions";
 
 type SearchParams = Promise<{ q?: string; result?: string }>;
@@ -27,7 +27,7 @@ const messages: Record<string, string> = {
 export default async function AdminPage({ searchParams }: { searchParams: SearchParams }) {
   const { user, isAdmin } = await getPlatformAdmin();
   if (!user) redirect("/login");
-  if (!isAdmin) return <main className="auth-page"><section className="auth-card"><p className="eyebrow">Restricted area</p><h1>Admin access required</h1><p className="page-intro">This portal is limited to email addresses listed in the server-only CREONIX_ADMIN_EMAILS setting.</p><Link className="button secondary" href="/dashboard">Back to Creonix</Link></section></main>;
+  if (!isAdmin) return <main className="auth-page"><section className="auth-card"><p className="eyebrow">Restricted area</p><h1>Admin access required</h1><p className="page-intro">This portal is limited to email addresses listed in the server-only CREAONIX_ADMIN_EMAILS setting.</p><Link className="button secondary" href="/dashboard">Back to Creaonix</Link></section></main>;
 
   const params = await searchParams;
   const admin = createAdminSupabaseClient();
@@ -39,7 +39,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
     : { data: null, error: null };
   const hasMigration = !admin || !subscriptionsError;
   const q = params.q?.trim().toLowerCase() ?? "";
-  const protectedAdmins = (process.env.CREONIX_ADMIN_EMAILS ?? "").split(",").map((email) => email.trim().toLowerCase()).filter(Boolean);
+  const protectedAdmins = getPlatformAdminEmails();
   const subsByUser = new Map((subscriptions ?? []).map((subscription) => [subscription.user_id, subscription]));
   const rows = (accounts?.users ?? []).filter((account) => !q || account.email?.toLowerCase().includes(q))
     .map((account) => ({ account, subscription: subsByUser.get(account.id) }))
@@ -47,7 +47,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
 
   return <div className="app-shell"><AppSidebar workspaceName="Platform admin" role="owner" active="Admin portal" isPlatformAdmin />
     <main id="main-content" className="main">
-      <header className="topbar"><div><p className="eyebrow">Creonix / Owner controls</p><h1>Admin portal</h1><p className="page-intro">Manage account access and manually activate subscriptions after confirming payment.</p></div><Link className="button secondary" href="/billing">My billing</Link></header>
+      <header className="topbar"><div><p className="eyebrow">Creaonix / Owner controls</p><h1>Admin portal</h1><p className="page-intro">Manage account access and manually activate subscriptions after confirming payment.</p></div><Link className="button secondary" href="/billing">My billing</Link></header>
       {params.result && <p className={`admin-notice ${params.result === "updated" ? "success" : ""}`} role="status">{messages[params.result] ?? "An admin action needs attention."}</p>}
       {!admin && <p className="admin-notice">{messages.configuration}</p>}
       {usersError && <p className="admin-notice">Could not load accounts from Supabase Auth: {usersError.message}</p>}
