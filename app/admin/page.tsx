@@ -25,18 +25,33 @@ const messages: Record<string, string> = {
 };
 
 export default async function AdminPage({ searchParams }: { searchParams: SearchParams }) {
-  const { user, isAdmin } = await getPlatformAdmin();
+  const { user, isAdmin, unavailable } = await getPlatformAdmin();
+  if (unavailable) return <main className="auth-page"><section className="auth-card"><p className="eyebrow">Creaonix / Owner controls</p><h1>Admin portal is temporarily unavailable</h1><p className="page-intro">We couldn’t reach Supabase Auth. Check the Vercel environment variables for the Supabase project URL and public key, then retry.</p><Link className="button secondary" href="/login">Back to sign in</Link></section></main>;
   if (!user) redirect("/login");
   if (!isAdmin) return <main className="auth-page"><section className="auth-card"><p className="eyebrow">Restricted area</p><h1>Admin access required</h1><p className="page-intro">This portal is limited to email addresses listed in the server-only CREAONIX_ADMIN_EMAILS setting.</p><Link className="button secondary" href="/dashboard">Back to Creaonix</Link></section></main>;
 
   const params = await searchParams;
   const admin = createAdminSupabaseClient();
-  const { data: accounts, error: usersError } = admin
-    ? await admin.auth.admin.listUsers({ page: 1, perPage: 1000 })
-    : { data: null, error: new Error("Service role key missing") };
-  const { data: subscriptions, error: subscriptionsError } = admin
-    ? await admin.from("subscriptions").select("user_id, plan, status, trial_ends_at, current_period_ends_at")
-    : { data: null, error: null };
+  let accounts: { users: Array<{ id: string; email?: string; created_at: string }> } | null = null;
+  let usersError: { message: string } | null = null;
+  let subscriptions: Array<{ user_id: string; plan: string; status: string; trial_ends_at: string | null; current_period_ends_at: string | null }> | null = null;
+  let subscriptionsError: { message: string } | null = null;
+  if (admin) {
+    try {
+      const result = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      accounts = result.data;
+      usersError = result.error;
+    } catch {
+      usersError = { message: "Supabase Auth could not be reached. Check the Vercel Supabase URL and service-role key." };
+    }
+    try {
+      const result = await admin.from("subscriptions").select("user_id, plan, status, trial_ends_at, current_period_ends_at");
+      subscriptions = result.data;
+      subscriptionsError = result.error;
+    } catch {
+      subscriptionsError = { message: "The subscription table could not be reached. Check the Supabase connection and migrations." };
+    }
+  }
   const hasMigration = !admin || !subscriptionsError;
   const q = params.q?.trim().toLowerCase() ?? "";
   const protectedAdmins = getPlatformAdminEmails();
@@ -51,7 +66,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
       {params.result && <p className={`admin-notice ${params.result === "updated" ? "success" : ""}`} role="status">{messages[params.result] ?? "An admin action needs attention."}</p>}
       {!admin && <p className="admin-notice">{messages.configuration}</p>}
       {usersError && <p className="admin-notice">Could not load accounts from Supabase Auth: {usersError.message}</p>}
-      {admin && !hasMigration && <p className="admin-notice">{messages.migration} Database response: {subscriptionsError.message}</p>}
+      {admin && !hasMigration && subscriptionsError && <p className="admin-notice">{messages.migration} Database response: {subscriptionsError.message}</p>}
 
       <section className="admin-grid">
         <article className="card admin-panel"><p className="eyebrow">Manual access</p><h2>Update a subscription</h2><p className="page-intro">Use the user’s exact sign-in email. Activating a paid plan starts a 30-day period immediately.</p>

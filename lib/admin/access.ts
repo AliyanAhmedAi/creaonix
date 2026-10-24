@@ -9,14 +9,20 @@ export function getPlatformAdminEmails() {
 }
 
 export async function getPlatformAdmin() {
-  const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-  const allowlist = getPlatformAdminEmails();
+  try {
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    const allowlist = getPlatformAdminEmails();
 
-  return {
-    user,
-    isAdmin: !error && Boolean(user?.email && allowlist.includes(user.email.toLowerCase()))
-  };
+    return {
+      user,
+      isAdmin: !error && Boolean(user?.email && allowlist.includes(user.email.toLowerCase())),
+      unavailable: Boolean(error)
+    };
+  } catch {
+    // Missing or unreachable Supabase configuration must not crash the admin route.
+    return { user: null, isAdmin: false, unavailable: true };
+  }
 }
 
 export function createAdminSupabaseClient() {
