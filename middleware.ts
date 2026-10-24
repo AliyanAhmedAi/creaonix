@@ -11,19 +11,25 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  const supabase = createServerClient(url, key, {
-    cookies: {
-      getAll: () => request.cookies.getAll(),
-      setAll: (cookiesToSet) => {
-        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-        response = NextResponse.next({ request });
-        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+  try {
+    const supabase = createServerClient(url, key, {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+        }
       }
-    }
-  });
+    });
 
-  // Refresh an expired access token. Do not use getSession() to authorize requests.
-  await supabase.auth.getUser();
+    // Refresh an expired access token. Do not use getSession() to authorize requests.
+    // A temporary Supabase outage must not crash every route; protected pages still
+    // perform their own server-side authorization before returning private data.
+    await supabase.auth.getUser();
+  } catch {
+    return response;
+  }
   return response;
 }
 
