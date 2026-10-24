@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { ContentStatus } from "@/lib/domain/types";
 import { updateContentStatus } from "@/app/content/actions";
